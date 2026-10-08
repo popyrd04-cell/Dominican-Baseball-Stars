@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Dominican Baseball Stars</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#07111f;color:white;
+ font-family:Arial,sans-serif;overflow:hidden;
+ touch-action:none
+}
+button{font-weight:bold;color:white;border:0;border-radius:15px}
+#menu,#game{width:100vw;height:100vh}
+#menu{
+ background:linear-gradient(#08244b,#06101d);
+ text-align:center;padding:25px 15px;overflow:auto
+}
+.logo{
+ font-size:clamp(34px,10vw,65px);
+ font-weight:1000;line-height:.85;
+ margin:20px auto;color:white;
+ text-shadow:4px 4px #d71920,-2px -2px #1261a0
+}
+.sub{font-size:16px;margin-bottom:20px}
+.menuButtons{
+ max-width:550px;margin:auto;
+ display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.menuButtons button{
+ padding:20px 8px;font-size:16px;
+ background:#123d70;box-shadow:0 5px #06101d
+}
+.menuButtons button:nth-child(2){background:#b51d27}
+.menuButtons button:nth-child(3){background:#c28b17}
+.menuButtons button:nth-child(4){background:#16804b}
+.menuButtons button:nth-child(5){background:#64399c}
+.menuButtons button:nth-child(6){background:#333}
+#teamPanel{
+ display:none;position:fixed;inset:0;
+ background:#06101df5;padding:25px;text-align:center;z-index:20
+}
+.teamBtn{
+ padding:15px;margin:6px;width:90%;
+ max-width:350px;background:#123d70
+}
+#game{
+ display:none;position:relative;
+ background:linear-gradient(#67bff0 0 45%,#278c40 45% 64%,#b87842 64%);
+}
+#score{
+ position:absolute;top:0;left:0;right:0;
+ background:#07111fe8;padding:10px;text-align:center;
+ font-size:17px;z-index:5
+}
+#inning{
+ font-size:13px;color:#ffd43b
+}
+#field{
+ position:absolute;inset:0
+}
+.diamond{
+ position:absolute;width:190px;height:190px;
+ background:#c58b51;
+ transform:rotate(45deg);
+ left:50%;top:56%;
+ margin:-95px;
+}
+.base{
+ position:absolute;width:20px;height:20px;
+ background:white
+}
+.first{right:-10px;top:85px}
+.second{left:85px;top:-10px}
+.third{left:-10px;top:85px}
+.home{left:85px;bottom:-10px}
+.player{
+ position:absolute;width:48px;height:90px;
+ z-index:2
+}
+.head{
+ width:34px;height:34px;border-radius:50%;
+ margin:auto;border:2px solid #171717
+}
+.body{
+ width:43px;height:48px;border-radius:12px;
+ margin:2px auto
+}
+.leg{
+ position:absolute;width:12px;height:30px;
+ background:#202020;bottom:0;border-radius:8px
+}
+.l1{left:10px}.l2{right:10px}
+.cap{
+ position:absolute;top:-3px;left:3px;
+ width:42px;height:13px;border-radius:12px 12px 3px 3px;
+ background:#111
+}
+.number{
+ position:absolute;top:42px;left:0;right:0;
+ text-align:center;font-size:13px;font-weight:bold
+}
+.pitcher{left:50%;top:39%;transform:translateX(-50%)}
+.batter{right:13%;bottom:13%}
+.ball{
+ position:absolute;width:15px;height:15px;
+ background:white;border-radius:50%;
+ border:2px solid #d71920;
+ z-index:4
+}
+#guide{
+ position:absolute;width:90px;height:90px;
+ border:4px solid #fff;border-radius:50%;
+ left:50%;top:63%;
+ transform:translate(-50%,-50%);
+ z-index:6;
+ box-shadow:0 0 0 3px #168dd855
+}
+#guide:after{
+ content:"";position:absolute;left:50%;top:50%;
+ width:10px;height:10px;border-radius:50%;
+ background:#d71920;transform:translate(-50%,-50%)
+}
+.controls{
+ position:absolute;bottom:12px;left:12px;right:12px;
+ display:flex;justify-content:space-between;
+ align-items:end;z-index:10
+}
+.joy{
+ width:75px;height:75px;border-radius:50%;
+ background:#07111ddd;border:2px solid white;font-size:25px
+}
+.actions{display:flex;gap:9px}
+.action{
+ width:82px;height:60px;font-size:13px;
+ background:#1767ad;box-shadow:0 4px #06101d
+}
+.swing{background:#d71920}
+.power{background:#e38c15}
+#message{
+ position:absolute;top:75px;left:50%;
+ transform:translateX(-50%);
+ font-size:25px;font-weight:1000;
+ text-shadow:2px 2px #000;z-index:9;
+ white-space:nowrap
+}
+#back{
+ position:absolute;top:55px;left:10px;
+ background:#07111dcc;padding:9px 13px;z-index:10
+}
+.info{
+ position:absolute;top:55px;right:10px;
+ background:#07111dcc;padding:8px;
+ font-size:12px;z-index:10
+}
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<div id="menu">
+
+<div class="logo">
+DOMINICAN<br>BASEBALL STARS
+</div>
+
+<div class="sub">
+⚾ Béisbol dominicano en versión mini 🇩🇴
+</div>
+
+<div class="menuButtons">
+
+<button onclick="chooseTeam()">⚾ JUGAR</button>
+<button onclick="chooseTeam()">🏆 TORNEOS</button>
+<button onclick="chooseTeam()">🎒 OBJETOS</button>
+<button onclick="showInfo()">🌐 ONLINE</button>
+<button onclick="showInfo()">👑 CREADOR</button>
+<button onclick="showInfo()">⚙️ AJUSTES</button>
+
+</div>
+
+</div>
+
+<!-- EQUIPOS -->
+<div id="teamPanel">
+
+<h1>ELIGE TU EQUIPO</h1>
+
+<button class="teamBtn" onclick="startGame(0)">🐯 TIGRES MINI</button><br>
+<button class="teamBtn" onclick="startGame(1)">🦁 LEONES MINI</button><br>
+<button class="teamBtn" onclick="startGame(2)">🦅 ÁGUILAS MINI</button><br>
+<button class="teamBtn" onclick="startGame(3)">⭐ ESTRELLAS MINI</button><br>
+<button class="teamBtn" onclick="startGame(4)">🐂 TOROS MINI</button><br>
+<button class="teamBtn" onclick="startGame(5)">🐎 GIGANTES MINI</button><br>
+
+<button class="teamBtn" onclick="closeTeams()">VOLVER</button>
+
+</div>
+
+<!-- JUEGO -->
+<div id="game">
+
+<div id="score">
+<span id="myTeam">TIGRES MINI</span>
+&nbsp; <b id="runs">0</b> - 0 &nbsp;
+LEONES MINI
+<div id="inning">1ra ENTRADA • 0 OUT</div>
+</div>
+
+<button id="back" onclick="backMenu()">MENÚ</button>
+
+<div class="info">
+Jugador: <b id="playerName">Carlos Valdez</b>
+</div>
+
+<div id="field">
+
+<div class="diamond">
+<div class="base first"></div>
+<div class="base second"></div>
+<div class="base third"></div>
+<div class="base home"></div>
+</div>
+
+<!-- PITCHER -->
+<div class="player pitcher">
+<div class="cap"></div>
+<div class="head" style="background:#8b572f"></div>
+<div class="body" id="pitchBody"></div>
+<div class="number">37</div>
+<div class="leg l1"></div>
+<div class="leg l2"></div>
+</div>
+
+<!-- BATTER -->
+<div class="player batter">
+<div class="cap" id="batCap"></div>
+<div class="head" id="batHead"></div>
+<div class="body" id="batBody"></div>
+<div class="number" id="batNumber">24</div>
+<div class="leg l1"></div>
+<div class="leg l2"></div>
+</div>
+
+<div id="guide"></div>
+
+</div>
+
+<div id="message">¡PREPÁRATE!</div>
+
+<div class="controls">
+
+<button class="joy"
+ontouchstart="moveGuide(-1,0)"
+onclick="moveGuide(-1,0)">◀</button>
+
+<div class="actions">
+
+<button class="action"
+onclick="moveGuide(-1,0)">◀</button>
+
+<button class="action swing"
+onclick="swing()">🏏 BATEAR</button>
+
+<button class="action power"
+onclick="powerSwing()">💥 POWER</button>
+
+<button class="action"
+onclick="moveGuide(1,0)">▶</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const teams=[
+ {name:"TIGRES MINI",color:"#1464b4",head:"#7b4a2b",player:"Carlos Valdez",num:24},
+ {name:"LEONES MINI",color:"#c51f2b",head:"#5c3826",player:"Luis Peña",num:11},
+ {name:"ÁGUILAS MINI",color:"#d39b17",head:"#75472a",player:"Miguel Rosario",num:7},
+ {name:"ESTRELLAS MINI",color:"#159447",head:"#4c2f22",player:"Daniel Cruz",num:21},
+ {name:"TOROS MINI",color:"#e47d19",head:"#87512d",player:"Joel Ramírez",num:9},
+ {name:"GIGANTES MINI",color:"#7a2d42",head:"#5a3425",player:"Wilmer Díaz",num:16}
+];
+
+let team=0;
+let runs=0;
+let outs=0;
+let pitches=0;
+let ball=null;
+let ballTimer=null;
+let guideX=50;
+
+function chooseTeam(){
+ document.getElementById("teamPanel").style.display="block";
+}
+
+function closeTeams(){
+ document.getElementById("teamPanel").style.display="none";
+}
+
+function startGame(t){
+
+ team=t;
+
+ document.getElementById("menu").style.display="none";
+ document.getElementById("teamPanel").style.display="none";
+ document.getElementById("game").style.display="block";
+
+ const x=teams[t];
+
+ document.getElementById("myTeam").textContent=x.name;
+ document.getElementById("playerName").textContent=x.player;
+ document.getElementById("batBody").style.background=x.color;
+ document.getElementById("batCap").style.background=x.color;
+ document.getElementById("batHead").style.background=x.head;
+ document.getElementById("batNumber").textContent=x.num;
+
+ message("¡BATEA!");
+
+ setTimeout(pitch,1200);
+}
+
+function message(text){
+ document.getElementById("message").textContent=text;
+}
+
+function pitch(){
+
+ if(document.getElementById("game").style.display==="none")return;
+
+ if(ball)ball.remove();
+
+ ball=document.createElement("div");
+ ball.className="ball";
+
+ ball.style.left="50%";
+ ball.style.top="39%";
+
+ document.getElementById("field").appendChild(ball);
+
+ let start=Date.now();
+
+ ballTimer=setInterval(()=>{
+
+   let elapsed=Date.now()-start;
+   let p=Math.min(elapsed/1700,1);
+
+   let x=50;
+   let y=39+(p*25);
+
+   ball.style.left=x+"%";
+   ball.style.top=y+"%";
+
+   if(p>=1){
+
+     clearInterval(ballTimer);
+
+     if(ball){
+       ball.remove();
+       ball=null;
+     }
+
+     pitches++;
+     outs++;
+
+     message("❌ ¡STRIKE!");
+
+     update();
+
+     if(outs>=3){
+       outs=0;
+       message("🔄 ¡CAMBIO DE ENTRADA!");
+     }
+
+     setTimeout(pitch,900);
+   }
+
+ },25);
+}
+
+function swing(){
+
+ if(!ball){
+   message("⏳ ESPERA EL LANZAMIENTO");
+   return;
+ }
+
+ let rect=ball.getBoundingClientRect();
+ let g=document.getElementById("guide").getBoundingClientRect();
+
+ let hit=
+ rect.left<g.right &&
+ rect.right>g.left &&
+ rect.top<g.bottom &&
+ rect.bottom>g.top;
+
+ clearInterval(ballTimer);
+
+ ball.remove();
+ ball=null;
+
+ if(hit){
+
+   let r=Math.random();
+
+   if(r>.78){
+     runs+=4;
+     message("💥 ¡JONRON!");
+   }else if(r>.45){
+     runs+=1;
+     message("🔥 ¡HIT!");
+   }else{
+     message("⚾ ¡BUEN CONTACTO!");
+   }
+
+ }else{
+
+   outs++;
+
+   if(outs>=3){
+     outs=0;
+     message("🔄 ¡CAMBIO DE ENTRADA!");
+   }else{
+     message("❌ ¡STRIKE!");
+   }
+ }
+
+ update();
+
+ setTimeout(pitch,1000);
+}
+
+function powerSwing(){
+
+ if(!ball){
+   message("⏳ ESPERA LA PELOTA");
+   return;
+ }
+
+ clearInterval(ballTimer);
+
+ let rect=ball.getBoundingClientRect();
+ let g=document.getElementById("guide").getBoundingClientRect();
+
+ ball.remove();
+ ball=null;
+
+ if(
+ rect.left<g.right &&
+ rect.right>g.left &&
+ rect.top<g.bottom &&
+ rect.bottom>g.top
+ ){
+
+   if(Math.random()>.35){
+     runs+=4;
+     message("🚀 ¡POWER JONRON!");
+   }else{
+     runs+=1;
+     message("🔥 ¡BATAZO!");
+   }
+
+ }else{
+
+   outs++;
+   message("❌ ¡FALLASTE!");
+
+ }
+
+ update();
+
+ setTimeout(pitch,1000);
+}
+
+function moveGuide(direction){
+
+ guideX+=direction*4;
+
+ if(guideX<25)guideX=25;
+ if(guideX>75)guideX=75;
+
+ document.getElementById("guide").style.left=guideX+"%";
+}
+
+function update(){
+
+ document.getElementById("runs").textContent=runs;
+ document.getElementById("inning").textContent=
+ "1ra ENTRADA • "+outs+" OUT";
+}
+
+function backMenu(){
+
+ clearInterval(ballTimer);
+
+ if(ball){
+   ball.remove();
+   ball=null;
+ }
+
+ document.getElementById("game").style.display="none";
+ document.getElementById("menu").style.display="block";
+
+ runs=0;
+ outs=0;
+ pitches=0;
+
+ update();
+}
+
+function showInfo(){
+
+ alert(
+ "Dominican Baseball Stars\n\n"+
+ "Versión inicial del juego.\n"+
+ "Online, torneos, objetos y más funciones serán añadidos en las próximas versiones."
+ );
+
+}
+
+</script>
+
+</body>
+  </html>
